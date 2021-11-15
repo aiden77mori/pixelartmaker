@@ -1,0 +1,153 @@
+<html>
+<head>
+    <title>Pixel Art Maker</title>
+    <style>
+        body {
+        text-align: center;
+        }
+
+        h1 {
+            font-size: 50px;
+            margin: 5px;
+        }
+
+        h2 {
+            margin: 10px 0 5px;
+        }
+
+        h1 #pixel {
+            color: blue;
+        }
+
+        h1 #art {
+            color: red
+        }
+
+        h1 #maker {
+            color: green;
+        }
+
+        h2:first-of-type {
+            margin-top: 20px;
+        }
+
+        table,
+        tr,
+        td {
+            border: 1px solid grey;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        tr {
+            height: 25px;
+        }
+
+        td {
+            width: 25px;
+            height: 25px;
+        }
+
+        input {
+            width: 70px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1><span id="pixel">Pixel </span><span id="art">Art </span><span id="maker">Maker</span></h1>
+
+    <h2>What Size Do You Want?</h2>
+    <form id="canvasTable">
+        Column:
+        <input type="number" id="inputColumn" name="column" min="1" value="1">
+        Row:
+        <input type="number" id="inputRow" name="row" min="1" value="1">
+        <input type="submit" value="Draw">
+    </form>
+
+    <h2>Choose A Color What you want</h2>
+    <input type="color" id="colorChooser">
+
+    <h2>Draw Pixel</h2>
+    <table id="drawPixel"></table>
+
+    <script src="./jquery.slim.min.js"></script>
+    
+    <script>
+
+        // Define main variable
+        const $canvasElement = $('#drawPixel');
+        const $inputHeight = $('#inputRow');
+        const $inputWidth = $('#inputColumn');
+        const $colorChooser = $('#colorChooser');
+
+        // Click submit for draw grid
+        $('#canvasTable').submit(e => {
+            e.preventDefault();
+
+            let column = $inputWidth.val();
+            let row = $inputHeight.val();
+
+            // Clear Grid
+            $canvasElement.html('');
+
+            // Call Draw Grid Function 
+            makeCanvas(row, column);
+            // Call EventListener
+            pixelClickListener();
+        });
+
+        // Draw Grid Function
+        function makeCanvas(row, column) {
+            for(let i = 0; i < row; i++) {
+                $canvasElement.append('<tr></tr>');
+            };
+            for(let i = 0; i < column; i++) {
+                $('tr').append('<td></td>');
+            };
+        }
+
+        // EventListener Function
+        function pixelClickListener() {
+
+            let move = 0;
+
+            // When Release the mouse click
+            $('td').on('mouseup', eventUp => {
+                move = 0;
+            });
+
+            // When click the mouse
+            $('td').on('mousedown', eventDown => {
+                eventDown.preventDefault();
+
+                // Call Choosing Color When Right Mouse Clicked
+                if(eventDown.which == 3) {
+                    $colorChooser.click();
+                    return;
+                }
+
+                let color = $colorChooser.val();
+                $(eventDown.currentTarget).css("background-color", color);
+                move = 1;
+
+                // When move the mouse while clicking
+                $('td').on('mousemove', eventMove => {
+                    eventMove.preventDefault();
+                    if(move === 1 && eventDown.currentTarget) $(eventMove.currentTarget).css("background-color", color);
+                });
+            });
+
+        }
+
+    </script>
+
+</body>
+
+</html>
